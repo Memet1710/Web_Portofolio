@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Keamanan Jaringan — CYBER SECURITY RIO ARDANA</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Poppins:wght@400;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="kj.css"/>
+</head>
+<body>
+  <!-- === Page Transition Overlay === -->
+  <div id="pt" class="pt-overlay" aria-hidden="true">
+    <div class="pt-grid"></div>
+    <div class="pt-bars">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <!-- Interactive circuit background -->
+  <canvas id="circuit" aria-hidden="true"></canvas>
+
+  <!-- Top bar -->
+  <header class="main-header">
+    <nav class="nav" aria-label="Utama">
+      <a class="brand" href="index.html">← Home</a>
+      <div class="nav-right">
+        <a href="keamanan_jaringan.html" class="active">Keamanan Jaringan</a>
+        <a href="peretasan_etis.html">Peretasan Etis</a>
+      </div>
+    </nav>
+
+    <h1 class="glitch" data-text="KEAMANAN JARINGAN">
+      KEAMANAN <span>JARINGAN</span>
+    </h1>
+    <p class="subtitle">Homelab Setup • Praktikum & Langkah-langkah</p>
+  </header>
+
+  <main id="content">
+    <!-- Intro / Topology -->
+    <section class="intro">
+      <p>
+        Halaman ini merangkum praktikum homelab: <strong>Honeypot</strong>, <strong>Wazuh (Manager & Agent)</strong>,
+        dan <strong>Kali Attacker</strong>. Gunakan hanya pada lingkungan uji/izin resmi.
+      </p>
+      <div class="topology" aria-label="Topologi Lab">
+        <div class="node">Kali (Attacker)</div>
+        <div class="node">Ubuntu (Honeypot)</div>
+        <div class="node">Ubuntu (Wazuh Manager)</div>
+        <div class="node">Ubuntu/Win (Wazuh Agent)</div>
+      </div>
+    </section>
+
+    <!-- Accordion / Dropdown sections -->
+    <section class="accordion" id="lab-accordion">
+
+      <!-- HONEYPOT -->
+      <article class="acc-item">
+        <h3 class="sr-only">Praktikum 1 — Honeypot (Cowrie)</h3>
+        <button class="acc-head" aria-expanded="false" aria-controls="p1" id="h1">
+          <span>Praktikum 1 — Honeypot (Cowrie)</span>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="acc-body" id="p1" role="region" aria-labelledby="h1">
+          <p><strong>Tujuan:</strong> Menangkap aktivitas login/command pada layanan palsu (SSH/Telnet) untuk analisis.</p>
+
+          <div class="step">
+            <h4>1) Prasyarat VM & Sistem</h4>
+            <ul class="check">
+              <li>Ubuntu Server 22.04/24.04 (RAM ≥ 2GB)</li>
+              <li>IP statis/terkontrol</li>
+              <li>Bridged/Host-Only sesuai kebutuhan</li>
+            </ul>
+          </div>
+
+          <div class="step">
+            <h4>2) Instalasi Cowrie</h4>
+            <div class="code">
+<pre><code class="bash">sudo apt-get update
+sudo apt-get install -y git python3 python3-venv python3-pip libssl-dev libffi-dev
+sudo adduser --disabled-password --gecos "" cowrie
+sudo su - cowrie
+git clone https://github.com/cowrie/cowrie.git
+cd cowrie
+python3 -m venv cowrie-env
+source cowrie-env/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+cp etc/cowrie.cfg.dist etc/cowrie.cfg
+bin/cowrie start
+bin/cowrie status
+# log: var/log/cowrie/ (cowrie.log, cowrie.json)</code></pre>
+              <button class="copy" type="button">Salin</button>
+            </div>
+          </div>
+
+          <div class="step">
+            <h4>3) Service systemd (opsional)</h4>
+            <div class="code">
+<pre><code class="bash">sudo tee /etc/systemd/system/cowrie.service &lt;&lt; 'EOF'
+[Unit]
+Description=Cowrie Honeypot
+After=network.target
+[Service]
+User=cowrie
+WorkingDirectory=/home/cowrie/cowrie
+ExecStart=/home/cowrie/cowrie/cowrie-env/bin/python /home/cowrie/cowrie/bin/cowrie start -n
+ExecStop=/home/cowrie/cowrie/bin/cowrie stop
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl daemon-reload
+sudo systemctl enable --now cowrie</code></pre>
+              <button class="copy" type="button">Salin</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- WAZUH MANAGER -->
+      <article class="acc-item">
+        <h3 class="sr-only">Praktikum 2 — Wazuh Manager</h3>
+        <button class="acc-head" aria-expanded="false" aria-controls="p2" id="h2">
+          <span>Praktikum 2 — Wazuh Manager</span>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="acc-body" id="p2" role="region" aria-labelledby="h2">
+          <p><strong>Tujuan:</strong> Menyusun SIEM/EDR untuk koleksi log, deteksi ancaman, dan alert.</p>
+
+          <div class="step">
+            <h4>1) Instalasi</h4>
+            <div class="code">
+<pre><code class="bash">sudo apt-get update
+sudo apt-get install -y curl apt-transport-https lsb-release gnupg
+curl -sO https://packages.wazuh.com/4.x/wazuh-install.sh
+sudo bash ./wazuh-install.sh -a
+# akses: https://&lt;IP-WAZUH&gt;/app/wazuh</code></pre>
+              <button class="copy" type="button">Salin</button>
+            </div>
+          </div>
+
+          <div class="step">
+            <h4>2) Verifikasi</h4>
+            <ul class="check">
+              <li><code>sudo systemctl status wazuh-manager</code></li>
+              <li>Catat kredensial dashboard; ubah segera</li>
+              <li>Atur lifecycle index</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- WAZUH AGENT -->
+      <article class="acc-item">
+        <h3 class="sr-only">Praktikum 3 — Wazuh Agent</h3>
+        <button class="acc-head" aria-expanded="false" aria-controls="p3" id="h3">
+          <span>Praktikum 3 — Wazuh Agent</span>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="acc-body" id="p3" role="region" aria-labelledby="h3">
+          <p><strong>Tujuan:</strong> Registrasi endpoint Ubuntu/Windows ke Manager.</p>
+
+          <div class="step">
+            <h4>1) Ubuntu Agent</h4>
+            <div class="code">
+<pre><code class="bash">WIP="&lt;WAZUH-MANAGER-IP&gt;"
+curl -sO https://packages.wazuh.com/4.x/wazuh-agent-4.x.deb
+sudo WAZUH_MANAGER="$WIP" dpkg -i ./wazuh-agent-4.x.deb
+sudo systemctl enable --now wazuh-agent
+sudo systemctl status wazuh-agent</code></pre>
+              <button class="copy" type="button">Salin</button>
+            </div>
+          </div>
+
+          <div class="step">
+            <h4>2) Konfigurasi</h4>
+            <ul class="check">
+              <li>Set <code>address=&lt;IP Manager&gt;</code> di <code>/var/ossec/etc/ossec.conf</code></li>
+              <li>Aktifkan Syscheck/Rootcheck seperlunya</li>
+              <li>Pastikan port komunikasi terbuka</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- KALI ATTACKER -->
+      <article class="acc-item">
+        <h3 class="sr-only">Praktikum 4 — Kali Attacker</h3>
+        <button class="acc-head" aria-expanded="false" aria-controls="p4" id="h4">
+          <span>Praktikum 4 — Kali Attacker (Lab Use Only)</span>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="acc-body" id="p4" role="region" aria-labelledby="h4">
+          <p><strong>Tujuan:</strong> Workstation uji etis di jaringan tertutup.</p>
+
+          <div class="step">
+            <h4>1) Setup</h4>
+            <div class="code">
+<pre><code class="bash">sudo apt update && sudo apt -y full-upgrade
+sudo apt -y install nmap wireshark tshark gobuster sqlmap \
+  seclists curl git python3-pip net-tools</code></pre>
+              <button class="copy" type="button">Salin</button>
+            </div>
+          </div>
+
+          <div class="step">
+            <h4>2) Jaringan</h4>
+            <ul class="check">
+              <li>Host-Only/Internal untuk isolasi</li>
+              <li>Dokumentasikan IP semua host</li>
+              <li>Siapkan layanan uji non-produksi</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Rio Ardana. All Rights Reserved.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Accordion (equal height + smooth animation + ARIA)
+    (function(){
+      const items = [...document.querySelectorAll('.acc-item')];
+      const heads = [...document.querySelectorAll('.acc-head')];
+      const bodies = [...document.querySelectorAll('.acc-body')];
+
+      // equalize height variable based on tallest panel
+      function setMaxPanelVar(){
+        let maxH = 0;
+        bodies.forEach(b => {
+          // measure natural height
+          b.style.maxHeight = 'none';
+          b.style.visibility = 'hidden';
+          b.style.display = 'block';
+          const h = b.scrollHeight;
+          maxH = Math.max(maxH, h);
+          b.style.removeProperty('display');
+          b.style.removeProperty('visibility');
+          b.style.removeProperty('max-height');
+        });
+        document.documentElement.style.setProperty('--acc-panel-height', (maxH + 24) + 'px');
+      }
+
+      // open/close helper
+      function toggle(item, expand){
+        const btn = item.querySelector('.acc-head');
+        const panel = item.querySelector('.acc-body');
+        const willExpand = (expand !== undefined) ? expand : !item.classList.contains('open');
+        item.classList.toggle('open', willExpand);
+        btn.setAttribute('aria-expanded', String(willExpand));
+      }
+
+      // click + keyboard
+      heads.forEach(h=>{
+        h.addEventListener('click', ()=>{
+          const cur = h.parentElement;
+          // close others
+          items.forEach(it => { if(it!==cur) toggle(it, false); });
+          toggle(cur);
+        });
+        h.addEventListener('keydown', (e)=>{
+          if(e.key === 'Enter' || e.key === ' '){
+            e.preventDefault(); h.click();
+          }
+        });
+      });
+
+      // recompute on load & resize for consistent equal height
+      window.addEventListener('load', setMaxPanelVar, { once:true });
+      window.addEventListener('resize', ()=>{ setMaxPanelVar(); }, { passive:true });
+
+      // copy buttons
+      document.querySelectorAll('.code .copy').forEach(b=>{
+        b.addEventListener('click', ()=>{
+          const pre = b.previousElementSibling;
+          navigator.clipboard.writeText(pre.innerText).then(()=>{
+            const old=b.textContent; b.textContent='Disalin ✓';
+            setTimeout(()=> b.textContent=old, 1200);
+          });
+        });
+      });
+    })();
+
+    // Circuit BG (same as before)
+    (function(){
+      const canvas = document.getElementById('circuit');
+      const ctx = canvas.getContext('2d', { alpha: true });
+      let W, H, DPR, nodes = [], links = [];
+      let mouse = { x: -9999, y: -9999 };
+      function resize(){
+        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        W = canvas.width  = Math.floor(window.innerWidth * DPR);
+        H = canvas.height = Math.floor(window.innerHeight * DPR);
+        canvas.style.width  = `${W / DPR}px`;
+        canvas.style.height = `${H / DPR}px`;
+        build();
+      }
+      function build(){
+        nodes = []; links = [];
+        const spacing = Math.max(90, Math.min(140, Math.floor(W/DPR/9)*10));
+        const jitter = spacing * 0.35;
+        const cols = Math.ceil((W/DPR) / spacing) + 2;
+        const rows = Math.ceil((H/DPR) / spacing) + 2;
+        for(let r=0;r<rows;r++){
+          for(let c=0;c<cols;c++){
+            const x=(c*spacing+(Math.random()*jitter-jitter/2))*DPR;
+            const y=(r*spacing+(Math.random()*jitter-jitter/2))*DPR;
+            nodes.push({x,y,ox:x,oy:y,z:0.6+Math.random()*0.8,p:Math.random()*6.28});
+          }
+        }
+        const maxD=(spacing*1.15)*DPR;
+        for(let i=0;i<nodes.length;i++){
+          const a=nodes[i]; let k=0;
+          for(let j=i+1;j<nodes.length && k<3;j++){
+            const b=nodes[j]; const dx=a.x-b.x, dy=a.y-b.y; const d=Math.hypot(dx,dy);
+            if(d<maxD){ links.push({a,b,d}); k++; }
+          }
+        }
+      }
+      window.addEventListener('mousemove', e=>{
+        const r=canvas.getBoundingClientRect(); mouse.x=(e.clientX-r.left)*DPR; mouse.y=(e.clientY-r.top)*DPR;
+      }, {passive:true});
+      window.addEventListener('mouseleave', ()=>{ mouse.x = mouse.y = -9999; });
+      function tick(){
+        ctx.clearRect(0,0,W,H);
+        for(const n of nodes){
+          n.p+=0.008; n.x+=Math.cos(n.p)*0.6*n.z; n.y+=Math.sin(n.p)*0.6*n.z;
+          n.x+=(n.ox-n.x)*0.02; n.y+=(n.oy-n.y)*0.02;
+        }
+        for(const L of links){
+          const ax=L.a.x, ay=L.a.y, bx=L.b.x, by=L.b.y;
+          const midx=(ax+bx)/2, midy=(ay+by)/2;
+          const md=Math.hypot(midx-mouse.x, midy-mouse.y);
+          let a=0.12*(1-Math.min(L.d/(300*DPR),1)); if(md<220*DPR) a+=(1-md/(220*DPR))*0.35;
+          ctx.strokeStyle=`rgba(0,212,255,${a.toFixed(3)})`;
+          ctx.beginPath(); const cx=(ax+bx)/2+(ay-by)*0.06, cy=(ay+by)/2+(bx-ax)*0.06;
+          ctx.quadraticCurveTo(cx,cy,bx,by); ctx.stroke();
+        }
+        for(const n of nodes){
+          const d=Math.hypot(n.x-mouse.x, n.y-mouse.y); let g=0.25; if(d<160*DPR) g+=(1-d/(160*DPR))*0.75;
+          ctx.fillStyle=`rgba(0,212,255,${0.12*g})`; ctx.beginPath(); ctx.arc(n.x,n.y,8*DPR,0,6.28); ctx.fill();
+          ctx.fillStyle=`rgba(180,240,255,${0.55*g})`; ctx.beginPath(); ctx.arc(n.x,n.y,2.1*DPR,0,6.28); ctx.fill();
+        }
+        requestAnimationFrame(tick);
+      }
+      resize(); window.addEventListener('resize', resize, {passive:true}); requestAnimationFrame(tick);
+    })();
+
+    // Page Transition Controller
+    (function(){
+      const overlay = document.getElementById('pt');
+      const NAV_SEL = 'a[href]';
+      requestAnimationFrame(()=> {
+        overlay.classList.add('pt-enter');
+        requestAnimationFrame(()=> {
+          overlay.classList.add('pt-enter-active');
+          overlay.addEventListener('animationend', () => {
+            overlay.classList.remove('pt-enter','pt-enter-active');
+          }, { once:true });
+        });
+      });
+      document.addEventListener('click', (e)=>{
+        const t = e.target.closest(NAV_SEL);
+        if(!t) return;
+        const href = t.getAttribute('href');
+        if(!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('http')) return;
+        e.preventDefault();
+        overlay.classList.add('pt-exit');
+        requestAnimationFrame(()=> {
+          overlay.classList.add('pt-exit-active');
+          overlay.addEventListener('animationend', ()=>{ window.location.href = href; }, { once:true });
+        });
+      });
+      window.addEventListener('pageshow', (e)=>{
+        if(e.persisted){ overlay.className = 'pt-overlay'; }
+      });
+    })();
+  </script>
+</body>
+</html>
