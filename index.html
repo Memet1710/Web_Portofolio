@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CYBER SECURITY  Matthew Saisab</title>
+  <title>CYBER SECURITY RIO ARDANA</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@
 
   <header class="hero">
     <h1 class="brand">
-      <span>CYBER SECURITY</span> <strong>MATTHEW SAISAB</strong>
+      <span>CYBER SECURITY</span> <strong>RIO ARDANA</strong>
     </h1>
 
     <p class="tag typewriter">
@@ -60,14 +60,22 @@
       </div>
     </section>
 
-    <section class="certs">
+    <!-- ✅ Certifications: carousel/select screen -->
+    <section class="certs" id="certifications">
       <h4>Certifications</h4>
-      <p class="muted">Coming soon — placeholders below.</p>
-      <div class="cert-grid">
-        <div class="cert"><span class="lock">🔒</span><em>Pending</em></div>
-        <div class="cert"><span class="lock">🔒</span><em>Pending</em></div>
-        <div class="cert"><span class="lock">🔒</span><em>Pending</em></div>
+      <p class="muted">Select a certificate — swipe/scroll to browse.</p>
+
+      <div class="cert-wrap">
+        <button class="cert-nav prev" type="button" aria-label="Previous certificate">‹</button>
+
+        <div class="cert-viewport" id="certViewport" tabindex="0" aria-label="Certificate carousel">
+          <div class="cert-track" id="certTrack"></div>
+        </div>
+
+        <button class="cert-nav next" type="button" aria-label="Next certificate">›</button>
       </div>
+
+      <div class="cert-dots" id="certDots" aria-label="Certificate position"></div>
     </section>
   </main>
 
@@ -112,15 +120,15 @@
         const s=Math.max(90,Math.min(140,Math.floor(W/D/9)*10));
         const j=s*0.35;const cols=Math.ceil((W/D)/s)+2;const rows=Math.ceil((H/D)/s)+2;
         for(let R=0;R<rows;R++)for(let C=0;C<cols;C++){
-          const x=(C*s+(Math.random()*j-j/2))*D;
-          const y=(R*s+(Math.random()*j-j/2))*D;
-          n.push({x,y,ox:x,oy:y,z:0.6+Math.random()*0.8,p:Math.random()*6.28});
+          const x1=(C*s+(Math.random()*j-j/2))*D;
+          const y1=(R*s+(Math.random()*j-j/2))*D;
+          n.push({x:x1,y:y1,ox:x1,oy:y1,z:0.6+Math.random()*0.8,p:Math.random()*6.28});
         }
         const md=(s*1.15)*D;
         for(let i=0;i<n.length;i++){const a=n[i];let k=0;
-          for(let j=i+1;j<n.length&&k<3;j++){const b=n[j];const d=Math.hypot(a.x-b.x,a.y-b.y);
-            if(d<md){l.push({a,b,d});k++;}}}}
-      addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();m.x=(e.clientX-r.left)*D;m.y=(e.clientY-r.top)*D;});
+          for(let j1=i+1;j1<n.length&&k<3;j1++){const b1=n[j1];const d=Math.hypot(a.x-b1.x,a.y-b1.y);
+            if(d<md){l.push({a:a,b:b1,d:d});k++;}}}}
+      addEventListener('mousemove',e=>{const rr=c.getBoundingClientRect();m.x=(e.clientX-rr.left)*D;m.y=(e.clientY-rr.top)*D;});
       addEventListener('mouseleave',()=>m.x=m.y=-9999);
       function t(){x.clearRect(0,0,W,H);
         for(const a of n){a.p+=0.008;a.x+=Math.cos(a.p)*0.6*a.z;a.y+=Math.sin(a.p)*0.6*a.z;a.x+=(a.ox-a.x)*0.02;a.y+=(a.oy-a.y)*0.02;}
@@ -133,10 +141,137 @@
           x.quadraticCurveTo(cx,cy,bx,by);x.stroke();}
         for(const a of n){const d=Math.hypot(a.x-m.x,a.y-m.y);let g=0.25;if(d<160*D)g+=(1-d/(160*D))*0.75;
           x.fillStyle=`rgba(0,212,255,${0.12*g})`;x.beginPath();x.arc(a.x,a.y,8*D,0,6.28);x.fill();
-          x.fillStyle=`rgba(180,240,255,${0.55*g})`;x.beginPath();x.arc(a.x,a.y,2.1*D,0,6.28);x.fill();}
+          x.fillStyle=`rgba(180,240,255,${0.18*g})`;x.beginPath();x.arc(a.x,a.y,2.4*D,0,6.28);x.fill();}
         requestAnimationFrame(t);}
-      r();addEventListener('resize',r);requestAnimationFrame(t);
+      addEventListener('resize',r,{passive:true});r();t();
     })();
   </script>
+
+  <!-- ✅ Carousel script -->
+  <!-- ✅ Carousel script (FIXED) -->
+<script>
+  // ===== Certifications Carousel (edit list here) =====
+  (function(){
+    const CERTS = [
+      { title: "Cyber 1", issuer: "Cyber Security", year: "2025", file: "Cyber 1.pdf" },
+      { title: "Cyber 3", issuer: "Cyber Security", year: "2025", file: "Cyber 3.pdf" },
+      { title: "Cyber 4", issuer: "Cyber Security", year: "2025", file: "Cyber 4.pdf" },
+      { title: "Cyber 5", issuer: "Cyber Security", year: "2025", file: "Cyber 5.pdf" },
+      { title: "Cyber 6", issuer: "Cyber Security", year: "2025", file: "Cyber 6.pdf" },
+      { title: "Cyber 7", issuer: "Cyber Security", year: "2025", file: "Cyber 7.pdf" },
+
+      { title: "Ethical 1", issuer: "Ethical Hacking", year: "2025", file: "Ethical 1.pdf" },
+      { title: "Ethical 2", issuer: "Ethical Hacking", year: "2025", file: "Ethical 2.pdf" },
+      { title: "Ethical 3", issuer: "Ethical Hacking", year: "2025", file: "Ethical 3.pdf" },
+      { title: "Ethical 4", issuer: "Ethical Hacking", year: "2025", file: "Ethical 4.pdf" },
+      { title: "Ethical 5", issuer: "Ethical Hacking", year: "2025", file: "Ethical 5.pdf" },
+      { title: "Ethical 6", issuer: "Ethical Hacking", year: "2025", file: "Ethical 6.pdf" },
+      { title: "Ethical 7", issuer: "Ethical Hacking", year: "2025", file: "Ethical 7.pdf" },
+
+      { title: "Universal 1", issuer: "General Certificate", year: "2025", file: "Universal 1.pdf" }
+    ];
+
+    const track = document.getElementById('certTrack');
+    const viewport = document.getElementById('certViewport');
+    const dots = document.getElementById('certDots');
+    const btnPrev = document.querySelector('.cert-nav.prev');
+    const btnNext = document.querySelector('.cert-nav.next');
+
+    if(!track || !viewport || !dots) return;
+
+    function certUrl(file){
+      return 'Sertifikat/' + encodeURIComponent(file);
+    }
+
+    function render(){
+      track.innerHTML = '';
+      dots.innerHTML = '';
+
+      CERTS.forEach((c, idx) => {
+        const url = certUrl(c.file);
+
+        const card = document.createElement('div');
+        card.className = 'cert-card';
+        card.setAttribute('role','group');
+        card.setAttribute('aria-label', `${idx+1} of ${CERTS.length}: ${c.title}`);
+        card.innerHTML = `
+          <div class="badge">🔒 <span>${c.year || ''}</span></div>
+          <h5>${c.title}</h5>
+          <p>${c.issuer || ''}</p>
+          <a class="open" href="${url}" target="_blank" rel="noopener">OPEN PDF</a>
+        `;
+
+        // klik card juga membuka PDF
+        card.addEventListener('click', (e)=>{
+          if(e.target && e.target.closest('a')) return;
+          window.open(url, '_blank', 'noopener');
+        });
+
+        track.appendChild(card);
+
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Go to certificate ${idx+1}`);
+        dot.addEventListener('click', ()=> scrollToIndex(idx));
+        dots.appendChild(dot);
+      });
+
+      updateDots(0);
+    }
+
+    function cardStep(){
+      const card = track.querySelector('.cert-card');
+      if(!card) return 260;
+      const style = getComputedStyle(track);
+      const gap = parseFloat(style.columnGap || style.gap || '0') || 0;
+      return card.getBoundingClientRect().width + gap;
+    }
+
+    function scrollToIndex(i){
+      const step = cardStep();
+      viewport.scrollTo({ left: i * step, behavior: 'smooth' });
+      updateDots(i);
+    }
+
+    function currentIndex(){
+      const step = cardStep();
+      return Math.round(viewport.scrollLeft / step);
+    }
+
+    function updateDots(active){
+      const all = [...dots.querySelectorAll('button')];
+      all.forEach((b,i)=> b.setAttribute('aria-current', String(i === active)));
+    }
+
+    function prev(){
+      const i = Math.max(0, currentIndex() - 1);
+      scrollToIndex(i);
+    }
+    function next(){
+      const i = Math.min(CERTS.length - 1, currentIndex() + 1);
+      scrollToIndex(i);
+    }
+
+    btnPrev && btnPrev.addEventListener('click', prev);
+    btnNext && btnNext.addEventListener('click', next);
+
+    // keyboard left/right saat fokus di viewport
+    viewport.addEventListener('keydown', (e)=>{
+      if(e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      if(e.key === 'ArrowRight'){ e.preventDefault(); next(); }
+    });
+
+    // update dots pas scroll berhenti
+    let t = null;
+    viewport.addEventListener('scroll', ()=>{
+      clearTimeout(t);
+      t = setTimeout(()=> updateDots(currentIndex()), 90);
+    }, { passive:true });
+
+    render();
+  })();
+</script>
+
+
 </body>
 </html>
